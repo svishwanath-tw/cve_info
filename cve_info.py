@@ -1,42 +1,12 @@
 #!/usr/bin/env python3
 import argparse
 import csv
-from functools import reduce
-from html.parser import HTMLParser
-from html.entities import name2codepoint
 import json
 import logging
 import sys
 import re 
 from urllib.request import urlopen
 
-#No longer needed
-class MyHTMLParser(HTMLParser):
-    def __init__(self, logError):
-        super().__init__()
-        self.captureTagContent = False
-        self.description = set([])
-
-    def handle_starttag(self, tag, attrs):
-        if tag != "p":
-            self.showdata = False
-            return
-        for attr in attrs:
-            logging.debug("attr " + attr + "of p tag")
-            self.showdata = attr[0] == 'data-testid' and attr[1].startswith('vuln')
-
-    def handle_data(self, data):
-        value = str(data).strip()
-        logging.debug("ShouldCaptureTagContent:" + str(self.captureTagContent) + "  value to description:" + value)
-        if self.captureTagContent:
-            logging.debug("Adding value to description" + value)
-            self.description.add(value)
-
-    def getDescription(self):
-        result = ""
-        for d in self.description:
-            result += self.description + "\n"
-        return result.strip()
 
 parser = argparse.ArgumentParser(description='Print offcial description of a CVE')
 
